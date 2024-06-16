@@ -1,7 +1,7 @@
 import org.cache.CacheService;
-import org.cache.LRUCacheNodeBased;
-import org.cache.LRUCacheServiceLinkedHashMapBased;
-import org.cache.LRUCacheServiceQueueBased;
+import org.cache.LRUDoublyLinkedListCache;
+import org.cache.LRULinkedHashMapCache;
+import org.cache.LRUHashMapQueueCache;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -10,13 +10,13 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class LRUCacheNodeBasedServiceTest {
+public class LRUCacheTest {
 
     public static Stream<CacheService<Integer, String>> cacheServices() {
         return Stream.of(
-                new LRUCacheNodeBased<>(3),
-                new LRUCacheServiceQueueBased<>(3),
-                new LRUCacheServiceLinkedHashMapBased<>(3)
+                new LRUDoublyLinkedListCache<>(3),
+                new LRUHashMapQueueCache<>(3),
+                new LRULinkedHashMapCache<>(3)
         );
     }
 

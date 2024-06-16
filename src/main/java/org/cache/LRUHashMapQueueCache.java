@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class LRUCacheServiceQueueBased<T, V> implements CacheService<T, V> {
+public class LRUHashMapQueueCache<T, V> implements CacheService<T, V> {
     private final int capacity;
     private final Map<T, V> cacheMap;
     private final Deque<T> deque;
@@ -15,7 +15,7 @@ public class LRUCacheServiceQueueBased<T, V> implements CacheService<T, V> {
      *
      * @param capacity the maximum number of elements the cache can hold
      */
-    public LRUCacheServiceQueueBased(int capacity) {
+    public LRUHashMapQueueCache(int capacity) {
         this.capacity = capacity;
         this.cacheMap = new HashMap<>();
         this.deque = new LinkedList<>();
@@ -75,7 +75,7 @@ public class LRUCacheServiceQueueBased<T, V> implements CacheService<T, V> {
 
     // Main method to test the LRUCacheService implementation
     public static void main(String[] args) {
-        CacheService<Integer, String> cache = new LRUCacheServiceQueueBased<>(3);
+        CacheService<Integer, String> cache = new LRUHashMapQueueCache<>(3);
         cache.put(1, "one");
         cache.put(2, "two");
         cache.put(3, "three");
