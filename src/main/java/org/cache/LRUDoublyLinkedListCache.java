@@ -9,7 +9,7 @@ import java.util.HashMap;
  * @param <T> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
-public class LRUCacheNodeBased<T, V> implements CacheService<T, V> {
+public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
 
     /**
      * The maximum number of elements the cache can hold.
@@ -36,7 +36,7 @@ public class LRUCacheNodeBased<T, V> implements CacheService<T, V> {
      *
      * @param capacity the maximum number of elements the cache can hold
      */
-    public LRUCacheNodeBased(int capacity) {
+    public LRUDoublyLinkedListCache(int capacity) {
         this.capacity = capacity;
         this.cacheMap = new HashMap<>();
         this.head = new Node<>(null, null);

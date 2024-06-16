@@ -10,7 +10,7 @@ import java.util.Map;
  * @param <T> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
-public class LRUCacheServiceLinkedHashMapBased<T, V> implements CacheService<T, V> {
+public class LRULinkedHashMapCache<T, V> implements CacheService<T, V> {
 
     /**
      * The underlying LinkedHashMap that stores the cache entries.
@@ -23,7 +23,7 @@ public class LRUCacheServiceLinkedHashMapBased<T, V> implements CacheService<T, 
      *
      * @param capacity the maximum number of elements the cache can hold
      */
-    public LRUCacheServiceLinkedHashMapBased(int capacity) {
+    public LRULinkedHashMapCache(int capacity) {
         linkHashMap = new LinkedHashMap<>(capacity, 0.75F, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<T, V> eldest) {
