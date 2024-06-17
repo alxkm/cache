@@ -7,15 +7,15 @@ import java.util.TreeMap;
 /**
  * A class representing a Least Frequently Used (LFU) Cache using a HashMap and a TreeMap.
  *
- * @param <T> the type of keys maintained by this cache
+ * @param <K> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
-public class LFUTreeMapCache<T, V> implements CacheService<T, V> {
+public class LFUTreeMapCache<K, V> implements CacheService<K, V> {
 
     private final int capacity;
     private int size;
-    private final Map<T, CacheNode<T, V>> cache;
-    private final TreeMap<Integer, Map<T, CacheNode<T, V>>> frequencyMap;
+    private final Map<K, CacheNode<K, V>> cache;
+    private final TreeMap<Integer, Map<K, CacheNode<K, V>>> frequencyMap;
 
     /**
      * Constructs an LFU Cache with the specified capacity.
@@ -37,19 +37,19 @@ public class LFUTreeMapCache<T, V> implements CacheService<T, V> {
      * @param value the value to be associated with the specified key
      */
     @Override
-    public void put(T id, V value) {
+    public void put(K id, V value) {
         if (capacity <= 0) return;
 
         if (cache.containsKey(id)) {
-            CacheNode<T, V> node = cache.get(id);
+            CacheNode<K, V> node = cache.get(id);
             node.value = value;
             get(id); // Increase frequency
         } else {
             if (size == capacity) {
                 // Evict the least frequently used item
-                Map.Entry<Integer, Map<T, CacheNode<T, V>>> entry = frequencyMap.firstEntry();
-                Map<T, CacheNode<T, V>> nodes = entry.getValue();
-                CacheNode<T, V> nodeToEvict = nodes.values().iterator().next();
+                Map.Entry<Integer, Map<K, CacheNode<K, V>>> entry = frequencyMap.firstEntry();
+                Map<K, CacheNode<K, V>> nodes = entry.getValue();
+                CacheNode<K, V> nodeToEvict = nodes.values().iterator().next();
                 nodes.remove(nodeToEvict.key);
                 if (nodes.isEmpty()) {
                     frequencyMap.pollFirstEntry();
@@ -58,7 +58,7 @@ public class LFUTreeMapCache<T, V> implements CacheService<T, V> {
                 size--;
             }
             // Add new item
-            CacheNode<T, V> newNode = new CacheNode<>(id, value);
+            CacheNode<K, V> newNode = new CacheNode<>(id, value);
             cache.put(id, newNode);
             frequencyMap.computeIfAbsent(1, k -> new HashMap<>()).put(id, newNode);
             size++;
@@ -73,12 +73,12 @@ public class LFUTreeMapCache<T, V> implements CacheService<T, V> {
      * @return the value to which the specified key is mapped, or null if this cache contains no mapping for the key
      */
     @Override
-    public V get(T id) {
+    public V get(K id) {
         if (!cache.containsKey(id)) return null;
 
-        CacheNode<T, V> node = cache.get(id);
+        CacheNode<K, V> node = cache.get(id);
         int currentFreq = node.frequency;
-        Map<T, CacheNode<T, V>> nodes = frequencyMap.get(currentFreq);
+        Map<K, CacheNode<K, V>> nodes = frequencyMap.get(currentFreq);
         nodes.remove(id);
 
         if (nodes.isEmpty()) {
@@ -96,12 +96,12 @@ public class LFUTreeMapCache<T, V> implements CacheService<T, V> {
      * @param id the key whose mapping is to be removed from the cache
      */
     @Override
-    public void evict(T id) {
+    public void evict(K id) {
         if (!cache.containsKey(id)) return;
 
-        CacheNode<T, V> node = cache.get(id);
+        CacheNode<K, V> node = cache.get(id);
         int currentFreq = node.frequency;
-        Map<T, CacheNode<T, V>> nodes = frequencyMap.get(currentFreq);
+        Map<K, CacheNode<K, V>> nodes = frequencyMap.get(currentFreq);
         nodes.remove(id);
 
         if (nodes.isEmpty()) {

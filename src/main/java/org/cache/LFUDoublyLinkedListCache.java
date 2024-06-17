@@ -6,15 +6,15 @@ import java.util.Map;
 /**
  * A class representing a Least Frequently Used (LFU) Cache using a doubly linked list.
  *
- * @param <T> the type of keys maintained by this cache
+ * @param <K> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
-public class LFUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
+public class LFUDoublyLinkedListCache<K, V> implements CacheService<K, V> {
 
     private final int capacity;
     private int size;
-    private final Map<T, Node<T, V>> cache;
-    private final Map<Integer, DoublyLinkedList<T, V>> frequencyMap;
+    private final Map<K, Node<K, V>> cache;
+    private final Map<Integer, DoublyLinkedList<K, V>> frequencyMap;
     private int minFrequency;
 
     /**
@@ -38,24 +38,24 @@ public class LFUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      * @param value the value to be associated with the specified key
      */
     @Override
-    public void put(T id, V value) {
+    public void put(K id, V value) {
         if (capacity <= 0) return;
 
         if (cache.containsKey(id)) {
-            Node<T, V> node = cache.get(id);
+            Node<K, V> node = cache.get(id);
             node.value = value;
             get(id); // Increase frequency
         } else {
             if (size == capacity) {
                 // Evict the least frequently used item
-                DoublyLinkedList<T, V> list = frequencyMap.get(minFrequency);
-                Node<T, V> nodeToEvict = list.tail.prev;
+                DoublyLinkedList<K, V> list = frequencyMap.get(minFrequency);
+                Node<K, V> nodeToEvict = list.tail.prev;
                 list.remove(nodeToEvict);
                 cache.remove(nodeToEvict.key);
                 size--;
             }
             // Add new item
-            Node<T, V> newNode = new Node<>(id, value);
+            Node<K, V> newNode = new Node<>(id, value);
             cache.put(id, newNode);
             frequencyMap.computeIfAbsent(1, k -> new DoublyLinkedList<>()).add(newNode);
             minFrequency = 1;
@@ -71,12 +71,12 @@ public class LFUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      * @return the value to which the specified key is mapped, or null if this cache contains no mapping for the key
      */
     @Override
-    public V get(T id) {
+    public V get(K id) {
         if (!cache.containsKey(id)) return null;
 
-        Node<T, V> node = cache.get(id);
+        Node<K, V> node = cache.get(id);
         int currentFreq = node.frequency;
-        DoublyLinkedList<T, V> list = frequencyMap.get(currentFreq);
+        DoublyLinkedList<K, V> list = frequencyMap.get(currentFreq);
         list.remove(node);
 
         if (currentFreq == minFrequency && list.size == 0) {
@@ -94,12 +94,12 @@ public class LFUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      * @param id the key whose mapping is to be removed from the cache
      */
     @Override
-    public void evict(T id) {
+    public void evict(K id) {
         if (!cache.containsKey(id)) return;
 
-        Node<T, V> node = cache.get(id);
+        Node<K, V> node = cache.get(id);
         int currentFreq = node.frequency;
-        DoublyLinkedList<T, V> list = frequencyMap.get(currentFreq);
+        DoublyLinkedList<K, V> list = frequencyMap.get(currentFreq);
         list.remove(node);
         cache.remove(id);
 

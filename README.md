@@ -20,9 +20,9 @@ LRU Cache is a caching technique where the least recently used items are removed
 `CacheService` defines the interface for the LRU Cache implementations.
 
 #### Methods
-- `put(T id, V value)`: Inserts a key-value pair into the cache. If the key already exists, updates the value and adjusts its position based on access.
-- `get(T id)`: Retrieves the value associated with the key from the cache. If the key exists, marks it as recently used.
-- `evict(T id)`: Removes the key-value pair from the cache.
+- `put(K id, V value)`: Inserts a key-value pair into the cache. If the key already exists, updates the value and adjusts its position based on access.
+- `get(K id)`: Retrieves the value associated with the key from the cache. If the key exists, marks it as recently used.
+- `evict(K id)`: Removes the key-value pair from the cache.
 
 ### Implementations
 
@@ -149,7 +149,7 @@ public LFUDoublyLinkedListCache(int capacity);
  * @param value the value to be associated with the specified key
  */
 @Override
-public void put(T id, V value);
+public void put(K id, V value);
 
 /**
  * Retrieves the value associated with the specified key. If the key is found,
@@ -159,7 +159,7 @@ public void put(T id, V value);
  * @return the value to which the specified key is mapped, or null if this cache contains no mapping for the key
  */
 @Override
-public V get(T id);
+public V get(K id);
 
 /**
  * Evicts the item with the specified key from the cache.
@@ -167,7 +167,7 @@ public V get(T id);
  * @param id the key whose mapping is to be removed from the cache
  */
 @Override
-public void evict(T id);
+public void evict(K id);
 ```
 
 **Time Complexity**
@@ -180,8 +180,8 @@ public void evict(T id);
 Represents a key-value pair with a frequency counter.
 
 ```java
-private static class CacheNode<T, V> {
-    T key;
+private static class CacheNode<K, V> {
+    K key;
     V value;
     int frequency;
 
@@ -191,7 +191,7 @@ private static class CacheNode<T, V> {
      * @param key   the key of the node
      * @param value the value of the node
      */
-    CacheNode(T key, V value);
+    CacheNode(K key, V value);
 }
 ```
 
@@ -220,7 +220,7 @@ public LFUTreeMapCache(int capacity);
  * @param value the value to be associated with the specified key
  */
 @Override
-public void put(T id, V value);
+public void put(K id, V value);
 
 /**
  * Retrieves the value associated with the specified key. If the key is found,
@@ -230,7 +230,7 @@ public void put(T id, V value);
  * @return the value to which the specified key is mapped, or null if this cache contains no mapping for the key
  */
 @Override
-public V get(T id);
+public V get(K id);
 
 /**
  * Evicts the item with the specified key from the cache.
@@ -238,7 +238,7 @@ public V get(T id);
  * @param id the key whose mapping is to be removed from the cache
  */
 @Override
-public void evict(T id);
+public void evict(K id);
 ```
 
 **Time Complexity**
@@ -251,8 +251,8 @@ public void evict(T id);
 Represents a key-value pair with a frequency counter.
 
 ```java
-private static class CacheNode<T, V> {
-    T key;
+private static class CacheNode<K, V> {
+    K key;
     V value;
     int frequency;
 
@@ -262,7 +262,7 @@ private static class CacheNode<T, V> {
      * @param key   the key of the node
      * @param value the value of the node
      */
-    CacheNode(T key, V value);
+    CacheNode(K key, V value);
 }
 ```
 
@@ -303,6 +303,90 @@ public class Main {
         linkedListCache.evict(3); // Manually evicts key 3
         
         System.out.println(linkedListCache.get(3)); // Outputs: null (since key 3 has been evicted)
+    }
+}
+```
+
+## MRU Cache Implementation
+
+### Overview
+
+MRU (Most Recently Used) Cache is a caching technique where the most recently used items are removed from the cache when it exceeds its predefined capacity. This approach is useful in scenarios where the least recently used items are more likely to be needed again soon.
+
+### MRUCache Class
+
+#### Description
+`MRUCache` is a Java implementation of an MRU Cache that uses a `HashMap` for quick access to cache entries and a `LinkedList` to maintain the order of entries based on their access time. This implementation ensures efficient retrieval, insertion, and eviction of cache entries based on their most recent usage.
+
+#### Constructor
+```java
+/**
+ * Constructs an MRU Cache with the specified capacity.
+ *
+ * @param capacity the capacity of the cache
+ */
+public MRUCache(int capacity);
+```
+
+#### Methods
+```java
+/**
+ * Adds an item to the cache. If the cache is full, evicts the most recently used item.
+ * If an item with the same key already exists, updates its value and marks it as recently used.
+ *
+ * @param id    the key with which the specified value is to be associated
+ * @param value the value to be associated with the specified key
+ */
+@Override
+public void put(T id, V value);
+
+/**
+ * Retrieves the value associated with the specified key. If the key is found,
+ * marks it as recently used.
+ *
+ * @param id the key whose associated value is to be returned
+ * @return the value to which the specified key is mapped, or null if this cache contains no mapping for the key
+ */
+@Override
+public V get(T id);
+
+/**
+ * Evicts the item with the specified key from the cache.
+ *
+ * @param id the key whose mapping is to be removed from the cache
+ */
+@Override
+public void evict(T id);
+```
+
+**Time Complexity**
+- `put`: O(1)
+- `get`: O(1)
+- `evict`: O(1)
+
+### Example
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        CacheService<Integer, String> cache = new MRUCache<>(3);
+        
+        cache.put(1, "one");
+        cache.put(2, "two");
+        cache.put(3, "three");
+        
+        System.out.println(cache.get(1)); // Outputs: one
+        
+        cache.put(4, "four"); // Evicts key 1, which is the most recently used
+        
+        System.out.println(cache.get(1)); // Outputs: null (since key 1 has been evicted)
+        System.out.println(cache.get(2)); // Outputs: two
+        System.out.println(cache.get(3)); // Outputs: three
+        System.out.println(cache.get(4)); // Outputs: four
+        
+        cache.evict(2); // Manually evicts key 2
+        
+        System.out.println(cache.get(2)); // Outputs: null (since key 2 has been evicted)
     }
 }
 ```

@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class LRUHashMapQueueCache<T, V> implements CacheService<T, V> {
+public class LRUHashMapQueueCache<K, V> implements CacheService<K, V> {
     private final int capacity;
-    private final Map<T, V> cacheMap;
-    private final Deque<T> deque;
+    private final Map<K, V> cacheMap;
+    private final Deque<K> deque;
 
     /**
      * Constructor to initialize LRU Cache with the specified capacity.
@@ -30,12 +30,12 @@ public class LRUHashMapQueueCache<T, V> implements CacheService<T, V> {
      * @param value the value of the element to be added
      */
     @Override
-    public void put(T id, V value) {
+    public void put(K id, V value) {
         if (cacheMap.containsKey(id)) {
             deque.remove(id);
         } else {
             if (deque.size() == capacity) {
-                T leastUsedKey = deque.removeLast();
+                K leastUsedKey = deque.removeLast();
                 cacheMap.remove(leastUsedKey);
             }
         }
@@ -51,7 +51,7 @@ public class LRUHashMapQueueCache<T, V> implements CacheService<T, V> {
      * @return the value of the element if it exists, otherwise null
      */
     @Override
-    public V get(T id) {
+    public V get(K id) {
         if (!cacheMap.containsKey(id)) {
             return null;
         }
@@ -66,7 +66,7 @@ public class LRUHashMapQueueCache<T, V> implements CacheService<T, V> {
      * @param id the key of the element to be evicted
      */
     @Override
-    public void evict(T id) {
+    public void evict(K id) {
         if (cacheMap.containsKey(id)) {
             deque.remove(id);
             cacheMap.remove(id);

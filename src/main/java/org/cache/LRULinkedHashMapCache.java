@@ -7,15 +7,15 @@ import java.util.Map;
  * LRU (Least Recently Used) Cache implementation using {@link LinkedHashMap}.
  * This cache automatically removes the least recently used entries when the capacity is exceeded.
  *
- * @param <T> the type of keys maintained by this cache
+ * @param <K> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
-public class LRULinkedHashMapCache<T, V> implements CacheService<T, V> {
+public class LRULinkedHashMapCache<K, V> implements CacheService<K, V> {
 
     /**
      * The underlying LinkedHashMap that stores the cache entries.
      */
-    private final LinkedHashMap<T, V> linkHashMap;
+    private final LinkedHashMap<K, V> linkHashMap;
 
     /**
      * Constructor to initialize LRU Cache with the specified capacity.
@@ -26,7 +26,7 @@ public class LRULinkedHashMapCache<T, V> implements CacheService<T, V> {
     public LRULinkedHashMapCache(int capacity) {
         linkHashMap = new LinkedHashMap<>(capacity, 0.75F, true) {
             @Override
-            protected boolean removeEldestEntry(Map.Entry<T, V> eldest) {
+            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
                 return size() > capacity;
             }
         };
@@ -41,7 +41,7 @@ public class LRULinkedHashMapCache<T, V> implements CacheService<T, V> {
      * @param value the value to be associated with the specified key
      */
     @Override
-    public void put(T id, V value) {
+    public void put(K id, V value) {
         linkHashMap.put(id, value);
     }
 
@@ -53,7 +53,7 @@ public class LRULinkedHashMapCache<T, V> implements CacheService<T, V> {
      * @return the value to which the specified key is mapped, or {@code null} if this cache contains no mapping for the key
      */
     @Override
-    public V get(T id) {
+    public V get(K id) {
         return linkHashMap.get(id);
     }
 
@@ -63,7 +63,7 @@ public class LRULinkedHashMapCache<T, V> implements CacheService<T, V> {
      * @param id the key whose mapping is to be removed from the cache
      */
     @Override
-    public void evict(T id) {
+    public void evict(K id) {
         linkHashMap.remove(id);
     }
 }

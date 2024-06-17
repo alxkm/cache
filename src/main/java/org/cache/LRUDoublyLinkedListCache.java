@@ -6,10 +6,10 @@ import java.util.HashMap;
  * LRU (Least Recently Used) Cache implementation using a custom doubly linked list and {@link HashMap}.
  * This cache automatically removes the least recently used entries when the capacity is exceeded.
  *
- * @param <T> the type of keys maintained by this cache
+ * @param <K> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
-public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
+public class LRUDoublyLinkedListCache<K, V> implements CacheService<K, V> {
 
     /**
      * The maximum number of elements the cache can hold.
@@ -19,17 +19,17 @@ public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
     /**
      * The HashMap that stores the cache entries.
      */
-    private final HashMap<T, Node<T, V>> cacheMap;
+    private final HashMap<K, Node<K, V>> cacheMap;
 
     /**
      * Dummy head of the doubly linked list.
      */
-    private Node<T, V> head;
+    private Node<K, V> head;
 
     /**
      * Dummy tail of the doubly linked list.
      */
-    private Node<T, V> tail;
+    private Node<K, V> tail;
 
     /**
      * Constructs a new LRUCacheNodeBased with the specified capacity.
@@ -54,9 +54,9 @@ public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      * @param value the value to be associated with the specified key
      */
     @Override
-    public void put(T id, V value) {
+    public void put(K id, V value) {
         if (cacheMap.containsKey(id)) {
-            Node<T, V> node = cacheMap.get(id);
+            Node<K, V> node = cacheMap.get(id);
             node.value = value;
             removeNode(node);
             addNodeToHead(node);
@@ -65,7 +65,7 @@ public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
                 cacheMap.remove(tail.prev.key);
                 removeNode(tail.prev);
             }
-            Node<T, V> newNode = new Node<>(id, value);
+            Node<K, V> newNode = new Node<>(id, value);
             cacheMap.put(id, newNode);
             addNodeToHead(newNode);
         }
@@ -79,9 +79,9 @@ public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      * @return the value to which the specified key is mapped, or {@code null} if this cache contains no mapping for the key
      */
     @Override
-    public V get(T id) {
+    public V get(K id) {
         if (cacheMap.containsKey(id)) {
-            Node<T, V> node = cacheMap.get(id);
+            Node<K, V> node = cacheMap.get(id);
             removeNode(node);
             addNodeToHead(node);
             return node.value;
@@ -95,9 +95,9 @@ public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      * @param id the key whose mapping is to be removed from the cache
      */
     @Override
-    public void evict(T id) {
+    public void evict(K id) {
         if (cacheMap.containsKey(id)) {
-            Node<T, V> node = cacheMap.get(id);
+            Node<K, V> node = cacheMap.get(id);
             removeNode(node);
             cacheMap.remove(id);
         }
@@ -108,7 +108,7 @@ public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      *
      * @param node the node to be added to the head of the list
      */
-    private void addNodeToHead(Node<T, V> node) {
+    private void addNodeToHead(Node<K, V> node) {
         node.next = head.next;
         node.prev = head;
         head.next.prev = node;
@@ -120,7 +120,7 @@ public class LRUDoublyLinkedListCache<T, V> implements CacheService<T, V> {
      *
      * @param node the node to be removed from the list
      */
-    private void removeNode(Node<T, V> node) {
+    private void removeNode(Node<K, V> node) {
         node.prev.next = node.next;
         node.next.prev = node.prev;
     }
